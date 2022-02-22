@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <title>Add new movie</title>
+</head>
+<body>
+    <h1>Add new movie:</h1>
+    <form class="" action="{% url 'CreateMovie' %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.errors %}
+                {{ field.errors }}
+            {% endif %}
+        {{ field }}<br><br>
+        {% endfor %}
+        <span>{{ error }}</span><br>
+        <h1><a href="{% url 'CreateActor' %}">При отсутствии актера - добавьте нового</a></h1>
+        <button class="btn btn-success" type="submit">Add new movie</button><br><br>
+        <hr>
+    </form>
+</body>
+</html>

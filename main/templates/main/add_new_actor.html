@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new actor</title>
+</head>
+<body>
+    <h1>Add new actor:</h1>
+    <form class="" action="{% url 'CreateActor' %}" method="post">
+        <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.errors %}
+                {{ field.errors }}
+            {% endif %}
+        {{ field }}<br><br>
+        {% endfor %}
+        <span>{{ error }}</span><br><br>
+        <button class="btn btn-success" type="submit">Add new actor</button><br><br>
+        <hr>
+    </form>
+</body>
+</html>

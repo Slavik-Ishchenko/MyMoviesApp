@@ -1,0 +1,5 @@
+celerybeat-schedule.dir
+celerybeat-schedule.dat
+celerybeat-schedule.bak
+.coverage
+db.sqlite3

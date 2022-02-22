@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <title>Movie Detail</title>
+</head>
+<body>
+    <h1>{{ object }}</h1>
+    <h2>Genre - {{ object.genre }}</h2>
+    <ul>{% for pic in object.moviepicture_set.all %}
+    <li style="list-style: none;"><img src="{{ pic.pict.url }}"></li>
+    </ul>
+        {% endfor %}
+    <h2>Preview: </h2>
+    <p>{{ object.preview }}</p>
+    <h2>Main actor:</h2>
+    <p>{{ object.actor }}</p>
+    <hr>
+    {% if vote_form %}
+    <form action="{{ vote_url_form }}" method="post">
+        {% csrf_token %}
+        {{ vote_form.as_p }}
+        <button class="btn btn-primary" type="submit">
+            Submit
+        </button>
+    </form>
+    {% else %}
+    <p>Log in to vote</p>
+    {% endif %}
+    {% if picture_form %}
+    <h3>New Picture</h3>
+    <form action="{% url 'MoviePictureUpload' movie_id=object.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ picture_form.as_p }}
+        <p>
+            <button class="btn btn-primary">
+                Add...
+            </button>
+        </p>
+    </form>
+    {% endif %}
+</body>
+</html>

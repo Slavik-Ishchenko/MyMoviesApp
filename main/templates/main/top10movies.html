@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <title>Top 10</title>
+</head>
+<body>
+    <h1>TOP 10:</h1>
+    <hr>
+    <ul style="list-style: none;">
+    {% for movie in object_list %}
+        <li>
+            <a href="{% url 'MovieDetail' pk=movie.id %}">
+                <h3>{{ movie }}</h3>
+            </a>
+        </li>
+    {% endfor %}
+</body>
+</html>
