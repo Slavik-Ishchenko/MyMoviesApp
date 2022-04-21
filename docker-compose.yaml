@@ -1,0 +1,75 @@
+version: '3.7'
+
+services:
+# Rabbitmq:
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'rabbitmq-3.8'
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - ./rabbitmq/etc/:/etc/rabbitmq/
+      - ./rabbitmq/data/:/var/lib/rabbitmq/
+      - ./rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_NODENAME=rabbitnode@localhost
+      - RABBITMQ_USER=rabbit
+      - RABBITMQ_PASSWORD=rabbit
+# Redis:
+  redis:
+    image: redis:alpine
+    container_name: redis
+# Database:
+  my_db:
+    image: postgres:12.0-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+# My app:
+  django:
+    container_name: my_movie2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "python /my_app/manage.py migrate --noinput &&
+                      python /my_app/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/my_app/
+    ports:
+      - '8000:8000'
+      - '1337:8000'
+    depends_on:
+      - my_db
+      - redis
+# Celery:
+  celery:
+    build: ./
+    command: celery -A register worker -l info
+    volumes:
+      - .:/my_app/
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+  celery-beat:
+    build: ./
+    command: celery -A register beat -l info
+    volumes:
+      - .:/my_app/
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+volumes:
+  pg_data:
